@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, {useState, useRef, useEffect} from 'react';
 import './task.css';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
@@ -6,6 +5,9 @@ import PropTypes from 'prop-types';
 import Timer from "../../Services/timer";
 
 const Task = ({ label, onDeleted, onToggleDone, done, id, alreadyTime, timerOn, timerOff, nameOfClass, edit, time }) => {
+  const changeTime = (t) => {
+    return formatDistanceToNow(t, { includeSeconds: true, addSuffix: true });
+  }
   const [currentLabel, setCurrentLabel] = useState('');
   const [timeAgo, setTimeAgo] = useState(changeTime(time));
   const values = useRef({prevNameOfClass: '', flag: true, });
@@ -34,19 +36,19 @@ const Task = ({ label, onDeleted, onToggleDone, done, id, alreadyTime, timerOn, 
   };
 
   const editFnBlur = () => {
-    const nameOfClass = values.current.prevNameOfClass;
+    const nameClass = values.current.prevNameOfClass;
     document.onkeydown = (evt) => {
       let isEscape = false;
       if ('key' in evt) {
         isEscape = evt.key === 'Escape' || evt.key === 'Esc';
       }
       if (isEscape) {
-        edit(id, { nameOfClass, label });
+        edit(id, { nameClass, label });
         values.current.flag = true;
       }
     };
     if (values.current.flag) {
-      edit(id, { nameOfClass, label });
+      edit(id, { nameClass, label });
       values.current.flag = true;
     }
   };
@@ -64,6 +66,7 @@ const Task = ({ label, onDeleted, onToggleDone, done, id, alreadyTime, timerOn, 
 
     const alreadyTimeFormat = new Timer(...alreadyTime).recountTime().transformToText().result();
     if (done) {
+      // eslint-disable-next-line no-param-reassign
       nameOfClass += ' completed';
     }
 
@@ -99,9 +102,7 @@ const Task = ({ label, onDeleted, onToggleDone, done, id, alreadyTime, timerOn, 
     );
 }
 
-const changeTime = (time) => {
-  return formatDistanceToNow(time, { includeSeconds: true, addSuffix: true });
-}
+
 
 Task.propTypes = {
   label: PropTypes.string.isRequired,
